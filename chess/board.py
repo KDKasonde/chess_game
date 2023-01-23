@@ -22,6 +22,8 @@ class Board:
                         chess.TILE_SIZE
                     )
                 )
+
+
     def create_board(self):
         pass
 
