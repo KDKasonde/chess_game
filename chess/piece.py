@@ -40,6 +40,9 @@ class Piece:
         image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
         screen.blit(image, (self.x, self.y))
 
+    def move(self, row, col):
+        pass
+
 
 class King(Piece):
     def __init__(self, row, col, colour):

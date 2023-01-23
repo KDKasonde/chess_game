@@ -23,21 +23,6 @@ class Board:
             self.cfg = cfg
         self.create_board()
 
-
-    def draw_squares(self, screen):
-        for row in range(ROWS):
-            for col in range(row % 2, ROWS, 2):
-                pygame.draw.rect(
-                    screen,
-                    BLACK,
-                    (
-                        (TILE_SIZE * col),
-                        (TILE_SIZE * row),
-                        TILE_SIZE,
-                        TILE_SIZE
-                    )
-                )
-
     def create_board(self):
         row, col = 0, 0
         self.board.append([])
@@ -55,7 +40,6 @@ class Board:
                     self.board[row].append(0)
                     col += 1
 
-
     def draw(self, screen):
         self.draw_squares(screen)
         for row in range(ROWS):
@@ -64,3 +48,20 @@ class Board:
 
                 if piece != 0:
                     piece.draw(screen)
+
+    def draw_squares(self, screen):
+        for row in range(ROWS):
+            for col in range(row % 2, ROWS, 2):
+                pygame.draw.rect(
+                    screen,
+                    BLACK,
+                    (
+                        (TILE_SIZE * col),
+                        (TILE_SIZE * row),
+                        TILE_SIZE,
+                        TILE_SIZE
+                    )
+                )
+
+    def move(self, piece, row, col):
+        pass
