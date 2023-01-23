@@ -1,12 +1,13 @@
-from chess_game.chess import (
+from chess_game.chess.constants import (
     WHITE,
+    BLACK,
     TILE_SIZE,
 )
 import os
 import pygame
 
 sourceFileDir = os.path.dirname(os.path.abspath('main.py'))
-Assets = os.path.join(sourceFileDir, 'Assests')
+Assets = os.path.join(sourceFileDir, 'chess_game' ,'Assests')
 
 
 class Piece:
@@ -18,6 +19,7 @@ class Piece:
         self.x = 0
         self.y = 0
         self.name = ""
+        self.calculate_position()
 
     def calculate_position(self):
         self.x = TILE_SIZE * self.col
@@ -26,72 +28,74 @@ class Piece:
     def __repr__(self):
         return str(self.colour + self.name)
 
-
-class King(Piece):
-    def __init__(self):
-        self.name = "king"
-
     def draw(self, screen):
-        location = os.path.join(Assets, self.colour + "king" + '.png')
+        if self.colour == WHITE:
+            str_colour = "White"
+        else:
+            str_colour = "Black"
+        piece_image = str_colour+self.name+ '.png'
+        location = os.path.join(Assets, piece_image)
+        print(location)
         image = pygame.image.load(location).convert_alpha()
         image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
         screen.blit(image, (self.x, self.y))
+
+
+class King(Piece):
+    def __init__(self, row, col, colour):
+        super().__init__(row, col, colour)
+        self.name = "King"
 
 
 class Queen(Piece):
-    def __init__(self):
-        self.name = "queen"
-
-    def draw(self, screen):
-        location = os.path.join(Assets, self.colour + "queen" + '.png')
-        image = pygame.image.load(location).convert_alpha()
-        image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
-        screen.blit(image, (self.x, self.y))
+    def __init__(self, row, col, colour):
+        super().__init__(row, col, colour)
+        self.name = "Queen"
 
 
 class Rook(Piece):
-    def __init__(self):
-        self.name = "rook"
-
-    def draw(self, screen):
-        location = os.path.join(Assets, self.colour + "rook" + '.png')
-        image = pygame.image.load(location).convert_alpha()
-        image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
-        screen.blit(image, (self.x, self.y))
+    def __init__(self, row, col, colour):
+        super().__init__(row, col, colour)
+        self.name = "Rook"
 
 
 class Knight(Piece):
-    def __init__(self):
-        self.name = "knight"
-
-    def draw(self, screen):
-        location = os.path.join(Assets, self.colour + "knight" + '.png')
-        image = pygame.image.load(location).convert_alpha()
-        image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
-        screen.blit(image, (self.x, self.y))
+    def __init__(self, row, col, colour):
+        super().__init__(row, col, colour)
+        self.name = "Knight"
 
 
 class Bishop(Piece):
-    def __init__(self):
-        self.name = "bishop"
-
-    def draw(self, screen):
-        location = os.path.join(Assets, self.colour + "bishop" + '.png')
-        image = pygame.image.load(location).convert_alpha()
-        image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
-        screen.blit(image, (self.x, self.y))
+    def __init__(self, row, col, colour):
+        super().__init__(row, col, colour)
+        self.name = "Bishop"
 
 
 class Pawn(Piece):
-    def __init__(self):
-        self.name = "pawn"
+    def __init__(self, row, col, colour):
+        super().__init__(row, col, colour)
+        self.name = "Pawn"
         if self.colour == WHITE:
             self.direction = 1
         else:
             self.direction = -1
 
-    def draw(self, screen):
-        location = os.path.join(Assets, self.colour + "pawn" + '.png')
-        image = pygame.image.load(location).convert_alpha()
-        image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
-        screen.blit(image, (self.x, self.y))
+
+def put_piece(string, row, col):
+
+    if string.isupper():
+        colour = BLACK
+    else:
+        colour = WHITE
+    if string.lower() == "b":
+        return Bishop(row, col, colour)
+    elif string.lower() == "n":
+        return Knight(row, col, colour)
+    elif string.lower() == "k":
+        return King(row, col, colour)
+    elif string.lower() == "p":
+        return Pawn(row, col, colour)
+    elif string.lower() == "q":
+        return Queen(row, col, colour)
+    else:
+        return Rook(row, col, colour)

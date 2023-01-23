@@ -9,7 +9,7 @@ WHITE = (255, 255, 255)
 # define some functions and classes for the game loop
 
 TILE_SIZE = 100
-
+#define FEN starting postion
 config = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 PIECE_DICT = {
         'b': 'black-bishop',

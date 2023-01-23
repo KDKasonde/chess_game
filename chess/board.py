@@ -1,29 +1,66 @@
-from chess_game import chess
+from chess_game.chess.constants import (
+    ROWS,
+    COLS,
+    BLACK,
+    TILE_SIZE,
+    config,
+    PIECE_DICT
+)
+from chess_game.chess.piece import (
+    put_piece
+)
 import pygame
 
 
 class Board:
 
-    def __init__(self):
+    def __init__(self, cfg = None):
         self.selected_piece = None
+        self.board = []
+        if cfg is None:
+            self.cfg = config
+        else:
+            self.cfg = cfg
+        self.create_board()
+
 
     def draw_squares(self, screen):
-        start_x, start_y = 0, 0
-        x, y = start_x, start_y
-        for row in range(chess.ROWS):
-            for col in range(row % 2, chess.ROWS, 2):
+        for row in range(ROWS):
+            for col in range(row % 2, ROWS, 2):
                 pygame.draw.rect(
                     screen,
-                    chess.BLACK,
+                    BLACK,
                     (
-                        (chess.TILE_SIZE * col),
-                        (chess.TILE_SIZE * row),
-                        chess.TILE_SIZE,
-                        chess.TILE_SIZE
+                        (TILE_SIZE * col),
+                        (TILE_SIZE * row),
+                        TILE_SIZE,
+                        TILE_SIZE
                     )
                 )
 
-
     def create_board(self):
-        pass
+        row, col = 0, 0
+        self.board.append([])
+        for string in self.cfg:
+            if string in PIECE_DICT.keys():
+                print('( ' + string + " , "+ str(row) + " , "+ str(col) )
+                self.board[row].append(put_piece(string, row, col))
+                col += 1
+            elif string == "/":
+                self.board.append([])
+                row += 1
+                col = 0
+            else:
+                for i in range(int(string)):
+                    self.board[row].append(0)
+                    col += 1
 
+
+    def draw(self, screen):
+        self.draw_squares(screen)
+        for row in range(ROWS):
+            for col in range(COLS):
+                piece = self.board[row][col]
+
+                if piece != 0:
+                    piece.draw(screen)

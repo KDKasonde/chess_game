@@ -2,7 +2,12 @@
 
 import pygame
 import os
-from chess_game import chess
+from chess_game.chess import (
+    Board,
+    WIDTH,
+    HEIGHT,
+    WHITE,
+)
 
 """
 Created on Fri Aug 20 18:06:50 2021
@@ -18,7 +23,7 @@ Chess game with graphics
 
 sourceFileDir = os.path.dirname(os.path.abspath('main.py'))
 # define the screen, framerate and other
-screen = pygame.display.set_mode((chess.WIDTH, chess.HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FRAMERATE = 60
 pygame.display.set_caption("Chess")
 Assets = os.path.join(sourceFileDir, 'Assests')
@@ -29,16 +34,12 @@ Assets = os.path.join(sourceFileDir, 'Assests')
 
 
 def draw_window():
-    screen.fill(chess.WHITE)
+    screen.fill(WHITE)
 
     pygame.display.update()
     return
 # place chess piece on board
 
-
-def place_piece(colour, piece, x, y):
-    piece = ChessPiece(colour, piece, x, y)
-    return piece
 
 # main game loop
 
@@ -47,9 +48,9 @@ def main():
 
     clock = pygame.time.Clock()
     run = True
-    board = chess.Board()
+    board = Board()
     draw_window()
-    board.draw_squares(screen)
+    board.draw(screen)
     while run:
         clock.tick(FRAMERATE)
         for event in pygame.event.get():
