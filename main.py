@@ -7,6 +7,7 @@ from chess_game.chess import (
     WIDTH,
     HEIGHT,
     WHITE,
+    TILE_SIZE,
 )
 
 """
@@ -29,8 +30,21 @@ pygame.display.set_caption("Chess")
 Assets = os.path.join(sourceFileDir, 'Assests')
 
 
+def get_square_under_mouse(board):
+    x, y = pygame.mouse.get_pos()
+    row = y // TILE_SIZE
+    col = x // TILE_SIZE
+    piece = board.get_piece(row, col)
 
-# update the window
+    return piece, row, col
+
+
+def draw_drag(screen, board, selected_piece):
+    row, col = None, None
+    if selected_piece:
+        piece, row, col = get_square_under_mouse(board)
+
+    return row, col
 
 
 def draw_window():
@@ -38,6 +52,8 @@ def draw_window():
 
     pygame.display.update()
     return
+
+
 # place chess piece on board
 
 
@@ -45,24 +61,38 @@ def draw_window():
 
 
 def main():
-
     clock = pygame.time.Clock()
     run = True
     board = Board()
     draw_window()
-    board.draw(screen)
+    selected_piece = None
+
     while run:
         clock.tick(FRAMERATE)
+        piece, row, col = get_square_under_mouse(board)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
-        
+                if piece != 0:
+                    selected_piece = piece, row, col
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                if (drop_position[0] is not None) & (drop_position[1] is not None):
+                    piece, old_row, old_col = selected_piece
+                    new_row, new_col = drop_position
+                    board.move(piece, new_row, new_col)
+
+                selected_piece = None
+                drop_position = None
+        board.draw(screen)
+        drop_position = draw_drag(screen, board, selected_piece)
+
         pygame.display.flip()
+
     pygame.quit()
-    
+
 
 if __name__ == "__main__":
     main()

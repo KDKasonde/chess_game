@@ -2,6 +2,7 @@ from chess_game.chess.constants import (
     ROWS,
     COLS,
     BLACK,
+    WHITE,
     TILE_SIZE,
     config,
     PIECE_DICT
@@ -28,7 +29,6 @@ class Board:
         self.board.append([])
         for string in self.cfg:
             if string in PIECE_DICT.keys():
-                print('( ' + string + " , "+ str(row) + " , "+ str(col) )
                 self.board[row].append(put_piece(string, row, col))
                 col += 1
             elif string == "/":
@@ -49,12 +49,18 @@ class Board:
                 if piece != 0:
                     piece.draw(screen)
 
+    def get_piece(self, row, col):
+        return self.board[row][col]
+
     def draw_squares(self, screen):
+        black = False
         for row in range(ROWS):
-            for col in range(row % 2, ROWS, 2):
+            for col in range(COLS):
+                print(row,  col, black)
+
                 pygame.draw.rect(
                     screen,
-                    BLACK,
+                    BLACK if black else WHITE,
                     (
                         (TILE_SIZE * col),
                         (TILE_SIZE * row),
@@ -62,6 +68,11 @@ class Board:
                         TILE_SIZE
                     )
                 )
+                black = not black
+            black = not black
 
     def move(self, piece, row, col):
-        pass
+        self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
+        piece.move(row, col)
+
+        return

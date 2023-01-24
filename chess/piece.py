@@ -26,7 +26,11 @@ class Piece:
         self.y = TILE_SIZE * self.row
 
     def __repr__(self):
-        return str(self.colour + self.name)
+        if self.colour == WHITE:
+            str_colour = "White"
+        else:
+            str_colour = "Black"
+        return str(str_colour + self.name)
 
     def draw(self, screen):
         if self.colour == WHITE:
@@ -41,7 +45,9 @@ class Piece:
         screen.blit(image, (self.x, self.y))
 
     def move(self, row, col):
-        pass
+        self.row = row
+        self.col = col
+        self.calculate_position()
 
 
 class King(Piece):
