@@ -32,17 +32,19 @@ class Piece:
             str_colour = "Black"
         return str(str_colour + self.name)
 
-    def draw(self, screen):
+    def draw(self, screen, position=None):
         if self.colour == WHITE:
             str_colour = "White"
         else:
             str_colour = "Black"
         piece_image = str_colour+self.name+ '.png'
         location = os.path.join(Assets, piece_image)
-        print(location)
         image = pygame.image.load(location).convert_alpha()
         image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
-        screen.blit(image, (self.x, self.y))
+        if position is not None:
+            screen.blit(image, (position[0] - TILE_SIZE/2, position[1] - TILE_SIZE/2))
+        else:
+            screen.blit(image, (self.x, self.y))
 
     def move(self, row, col):
         self.row = row

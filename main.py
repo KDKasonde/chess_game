@@ -39,7 +39,7 @@ def get_square_under_mouse(board):
     return piece, row, col
 
 
-def draw_drag(screen, board, selected_piece):
+def draw_drag(board, selected_piece):
     row, col = None, None
     if selected_piece:
         piece, row, col = get_square_under_mouse(board)
@@ -84,10 +84,12 @@ def main():
                     new_row, new_col = drop_position
                     board.move(piece, new_row, new_col)
 
+
                 selected_piece = None
                 drop_position = None
-        board.draw(screen)
-        drop_position = draw_drag(screen, board, selected_piece)
+
+        board.draw(screen, selected_piece, pygame.mouse.get_pos())
+        drop_position = draw_drag(board, selected_piece)
 
         pygame.display.flip()
 

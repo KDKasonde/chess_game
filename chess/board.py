@@ -40,14 +40,22 @@ class Board:
                     self.board[row].append(0)
                     col += 1
 
-    def draw(self, screen):
+    def draw(self, screen, selected_piece, mouse_position=None):
         self.draw_squares(screen)
+        if selected_piece is not None:
+            moving_piece, moving_row, moving_col = selected_piece
+        else:
+            moving_piece, moving_row, moving_col = None, None, None
         for row in range(ROWS):
             for col in range(COLS):
                 piece = self.board[row][col]
 
                 if piece != 0:
-                    piece.draw(screen)
+                    # how to display a still selected piece
+                    if (moving_row == row) & (moving_col == col):
+                        piece.draw(screen, mouse_position)
+                    else:
+                        piece.draw(screen)
 
     def get_piece(self, row, col):
         return self.board[row][col]
@@ -56,7 +64,6 @@ class Board:
         black = False
         for row in range(ROWS):
             for col in range(COLS):
-                print(row,  col, black)
 
                 pygame.draw.rect(
                     screen,
