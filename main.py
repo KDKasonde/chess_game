@@ -27,7 +27,7 @@ sourceFileDir = os.path.dirname(os.path.abspath('main.py'))
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FRAMERATE = 60
 pygame.display.set_caption("Chess")
-Assets = os.path.join(sourceFileDir, 'Assests')
+Assets = os.path.join(sourceFileDir, 'chess_game' ,'Assests')
 
 
 def get_square_under_mouse(board):

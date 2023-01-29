@@ -7,7 +7,7 @@ import os
 import pygame
 
 sourceFileDir = os.path.dirname(os.path.abspath('main.py'))
-Assets = os.path.join(sourceFileDir, 'chess_game' ,'Assests')
+Assets = os.path.join(sourceFileDir,'chess_game' ,'Assests')
 
 
 class Piece:
@@ -51,11 +51,25 @@ class Piece:
         self.col = col
         self.calculate_position()
 
+    def is_valid_move(self, row, col, board):
+
+        return True
+
 
 class King(Piece):
     def __init__(self, row, col, colour):
         super().__init__(row, col, colour)
         self.name = "King"
+
+    def is_valid_move(self, row, col, board):
+
+        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+            return False
+        if ((abs(row - self.row) > 1) or (abs(col - self.col) > 1)):
+            return False
+        if board[row][col] != 0:
+            return False
+        return True
 
 
 class Queen(Piece):

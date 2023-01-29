@@ -61,13 +61,13 @@ class Board:
         return self.board[row][col]
 
     def draw_squares(self, screen):
-        black = False
+        white = False
         for row in range(ROWS):
             for col in range(COLS):
 
                 pygame.draw.rect(
                     screen,
-                    BLACK if black else WHITE,
+                    WHITE if white else BLACK,
                     (
                         (TILE_SIZE * col),
                         (TILE_SIZE * row),
@@ -75,11 +75,13 @@ class Board:
                         TILE_SIZE
                     )
                 )
-                black = not black
-            black = not black
+                white = not white
+            white = not white
 
     def move(self, piece, row, col):
-        self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
-        piece.move(row, col)
+        is_valid = piece.is_valid_move(row, col, self.board)
+        if is_valid:
+            self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
+            piece.move(row, col)
 
         return
