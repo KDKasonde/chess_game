@@ -88,15 +88,14 @@ class Queen(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
+        if board[row][col] != 0:
+            return False
         if (
             (abs(row - self.row) == abs(col - self.col))
             or (abs(row - self.row) == 0)
             or (abs(col - self.col) == 0)
         ):
-            return False
-        if board[row][col] != 0:
-            return False
-        return True
+            return True
 
 
 class Rook(Piece):
@@ -104,11 +103,31 @@ class Rook(Piece):
         super().__init__(row, col, colour)
         self.name = "Rook"
 
+    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+
+        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+            return False
+        if board[row][col] != 0:
+            return False
+        if (abs(row - self.row) == 0) or (abs(col - self.col) == 0):
+            return True
+
 
 class Knight(Piece):
     def __init__(self, row: int, col: int, colour: Tuple[int, int, int]):
         super().__init__(row, col, colour)
         self.name = "Knight"
+
+    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+
+        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+            return False
+        if board[row][col] != 0:
+            return False
+        if ((abs(row - self.row) == 1) & (abs(col - self.col) == 2)) or (
+            (abs(row - self.row) == 2) & (abs(col - self.col) == 1)
+        ):
+            return True
 
 
 class Bishop(Piece):
@@ -116,15 +135,44 @@ class Bishop(Piece):
         super().__init__(row, col, colour)
         self.name = "Bishop"
 
+    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+
+        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+            return False
+        if board[row][col] != 0:
+            return False
+        if abs(row - self.row) == abs(col - self.col):
+            return True
+
 
 class Pawn(Piece):
     def __init__(self, row: int, col: int, colour: Tuple[int, int, int]):
         super().__init__(row, col, colour)
         self.name = "Pawn"
+        self.moved = False
         if self.colour == WHITE:
             self.direction = 1
         else:
             self.direction = -1
+
+    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+
+        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+            return False
+        if board[row][col] != 0:
+            return False
+        if (
+            (self.direction * (row - self.row) == 2)
+            & (self.direction * (col - self.col) == 0)
+            & (not self.moved)
+        ):
+            self.moved = True
+            return True
+        if (self.direction * (row - self.row) == 1) & (
+            self.direction * (col - self.col) == 0
+        ):
+            self.moved = True
+            return True
 
 
 def put_piece(string: str, row: int, col: int):
