@@ -88,27 +88,7 @@ class Board:
             if not piece.moved:
                 is_castle = piece.is_castle(row, col, self.board)
                 if is_castle:
-                    if col < piece.col:
-                        rook = self.board[piece.row][0]
-                        self.board[rook.row][rook.col], self.board[row][col + 1] = (
-                            self.board[row][col + 1],
-                            self.board[rook.row][rook.col],
-                        )
-                        rook.move(row, col + 1)
-                    if col > piece.col:
-                        rook = self.board[piece.row][7]
-                        self.board[rook.row][rook.col], self.board[row][col - 1] = (
-                            self.board[row][col - 1],
-                            self.board[rook.row][rook.col],
-                        )
-                        rook.move(row, col - 1)
-
-                    self.board[piece.row][piece.col], self.board[row][col] = (
-                        self.board[row][col],
-                        self.board[piece.row][piece.col],
-                    )
-                    piece.move(row, col)
-
+                    self._castle(row, col, self.board)
                     return
 
         is_valid = piece.is_valid_move(row, col, self.board)
@@ -121,3 +101,30 @@ class Board:
             piece.move(row, col)
 
         return
+
+    def _castle(self, piece: Piece, row: int, col: int):
+        if col < piece.col:
+            rook = self.board[piece.row][0]
+            self.board[rook.row][rook.col], self.board[row][col + 1] = (
+                self.board[row][col + 1],
+                self.board[rook.row][rook.col],
+            )
+            rook.move(row, col + 1)
+        if col > piece.col:
+            rook = self.board[piece.row][7]
+            self.board[rook.row][rook.col], self.board[row][col - 1] = (
+                self.board[row][col - 1],
+                self.board[rook.row][rook.col],
+            )
+            rook.move(row, col - 1)
+
+        self.board[piece.row][piece.col], self.board[row][col] = (
+            self.board[row][col],
+            self.board[piece.row][piece.col],
+        )
+        piece.move(row, col)
+
+        return
+
+    def _en_passant(self):
+        pass
