@@ -7,8 +7,8 @@ import os
 import pygame
 from typing import Union, Optional, Tuple, List
 
-sourceFileDir = os.path.dirname(os.path.abspath('main.py'))
-Assets = os.path.join(sourceFileDir,'chess_game' ,'Assests')
+sourceFileDir = os.path.dirname(os.path.abspath("main.py"))
+Assets = os.path.join(sourceFileDir, "chess_game", "Assests")
 
 
 class Piece:
@@ -33,17 +33,23 @@ class Piece:
             str_colour = "Black"
         return str(str_colour + self.name)
 
-    def draw(self, screen: Union[pygame.Surface, pygame.SurfaceType], position: Optional[Tuple[int, int]]=None):
+    def draw(
+        self,
+        screen: Union[pygame.Surface, pygame.SurfaceType],
+        position: Optional[Tuple[int, int]] = None,
+    ):
         if self.colour == WHITE:
             str_colour = "White"
         else:
             str_colour = "Black"
-        piece_image = str_colour+self.name+ '.png'
+        piece_image = str_colour + self.name + ".png"
         location = os.path.join(Assets, piece_image)
         image = pygame.image.load(location).convert_alpha()
         image = pygame.transform.scale(image, (TILE_SIZE, TILE_SIZE))
         if position is not None:
-            screen.blit(image, (position[0] - TILE_SIZE/2, position[1] - TILE_SIZE/2))
+            screen.blit(
+                image, (position[0] - TILE_SIZE / 2, position[1] - TILE_SIZE / 2)
+            )
         else:
             screen.blit(image, (self.x, self.y))
 
@@ -66,7 +72,7 @@ class King(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
-        if ((abs(row - self.row) > 1) or (abs(col - self.col) > 1)):
+        if (abs(row - self.row) > 1) or (abs(col - self.col) > 1):
             return False
         if board[row][col] != 0:
             return False
@@ -82,8 +88,11 @@ class Queen(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
-
-        if ((abs(row - self.row)==abs(col - self.col)) or (abs(row - self.row) == 0) or (abs(col - self.col) == 0) ):
+        if (
+            (abs(row - self.row) == abs(col - self.col))
+            or (abs(row - self.row) == 0)
+            or (abs(col - self.col) == 0)
+        ):
             return False
         if board[row][col] != 0:
             return False
