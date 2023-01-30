@@ -103,11 +103,13 @@ class Board:
                         )
                         rook.move(row, col - 1)
 
-                self.board[piece.row][piece.col], self.board[row][col] = (
-                    self.board[row][col],
-                    self.board[piece.row][piece.col],
-                )
-                piece.move(row, col)
+                    self.board[piece.row][piece.col], self.board[row][col] = (
+                        self.board[row][col],
+                        self.board[piece.row][piece.col],
+                    )
+                    piece.move(row, col)
+
+                    return
 
         is_valid = piece.is_valid_move(row, col, self.board)
 
