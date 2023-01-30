@@ -5,7 +5,7 @@ from chess_game.chess.constants import (
     WHITE,
     TILE_SIZE,
     config,
-    PIECE_DICT
+    PIECE_DICT,
 )
 from chess_game.chess.piece import (
     Piece,
@@ -16,7 +16,6 @@ from typing import Union, Optional, Tuple
 
 
 class Board:
-
     def __init__(self, cfg: Optional[str] = None):
         self.selected_piece = None
         self.board = []
@@ -42,7 +41,12 @@ class Board:
                     self.board[row].append(0)
                     col += 1
 
-    def draw(self, screen: Union[pygame.Surface, pygame.SurfaceType], selected_piece: Piece, mouse_position: Optional[Tuple[int, int]]=None):
+    def draw(
+        self,
+        screen: Union[pygame.Surface, pygame.SurfaceType],
+        selected_piece: Piece,
+        mouse_position: Optional[Tuple[int, int]] = None,
+    ):
         self.draw_squares(screen)
         if selected_piece is not None:
             moving_piece, moving_row, moving_col = selected_piece
@@ -62,7 +66,10 @@ class Board:
     def get_piece(self, row: int, col: int):
         return self.board[row][col]
 
-    def draw_squares(self, screen: Union[pygame.Surface, pygame.SurfaceType],):
+    def draw_squares(
+        self,
+        screen: Union[pygame.Surface, pygame.SurfaceType],
+    ):
         white = False
         for row in range(ROWS):
             for col in range(COLS):
@@ -70,20 +77,45 @@ class Board:
                 pygame.draw.rect(
                     screen,
                     WHITE if white else BLACK,
-                    (
-                        (TILE_SIZE * col),
-                        (TILE_SIZE * row),
-                        TILE_SIZE,
-                        TILE_SIZE
-                    )
+                    ((TILE_SIZE * col), (TILE_SIZE * row), TILE_SIZE, TILE_SIZE),
                 )
                 white = not white
             white = not white
 
     def move(self, piece: Piece, row: int, col: int):
+
+        if piece.name == "King":
+            if not piece.moved:
+                is_castle = piece.is_castle(row, col, self.board)
+                if is_castle:
+                    if col < piece.col:
+                        rook = self.board[piece.row][0]
+                        self.board[rook.row][rook.col], self.board[row][col + 1] = (
+                            self.board[row][col + 1],
+                            self.board[rook.row][rook.col],
+                        )
+                        rook.move(row, col + 1)
+                    if col > piece.col:
+                        rook = self.board[piece.row][7]
+                        self.board[rook.row][rook.col], self.board[row][col - 1] = (
+                            self.board[row][col - 1],
+                            self.board[rook.row][rook.col],
+                        )
+                        rook.move(row, col - 1)
+
+                self.board[piece.row][piece.col], self.board[row][col] = (
+                    self.board[row][col],
+                    self.board[piece.row][piece.col],
+                )
+                piece.move(row, col)
+
         is_valid = piece.is_valid_move(row, col, self.board)
+
         if is_valid:
-            self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
+            self.board[piece.row][piece.col], self.board[row][col] = (
+                self.board[row][col],
+                self.board[piece.row][piece.col],
+            )
             piece.move(row, col)
 
         return

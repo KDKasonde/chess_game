@@ -67,6 +67,7 @@ class King(Piece):
     def __init__(self, row: int, col: int, colour: Tuple[int, int, int]):
         super().__init__(row, col, colour)
         self.name = "King"
+        self.moved = False
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
 
@@ -76,7 +77,24 @@ class King(Piece):
             return False
         if board[row][col] != 0:
             return False
+        self.moved = True
         return True
+
+    def is_castle(self, row: int, col: int, board: List[List[int]]):
+
+        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+            return False
+        if (abs(row - self.row) != 0) or (abs(col - self.col) != 2):
+            return False
+        if col < self.col:
+            if (board[row][0].name == "Rook") & (not board[row][0].moved):
+                self.moved = True
+                return True
+        if col > self.col:
+            if (board[row][7].name == "Rook") & (not board[row][7].moved):
+                self.moved = True
+                return True
+        return False
 
 
 class Queen(Piece):
@@ -102,6 +120,7 @@ class Rook(Piece):
     def __init__(self, row: int, col: int, colour: Tuple[int, int, int]):
         super().__init__(row, col, colour)
         self.name = "Rook"
+        self.moved = False
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
 
@@ -110,6 +129,7 @@ class Rook(Piece):
         if board[row][col] != 0:
             return False
         if (abs(row - self.row) == 0) or (abs(col - self.col) == 0):
+            self.moved = True
             return True
 
 
