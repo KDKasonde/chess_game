@@ -8,6 +8,7 @@ from chess_game.chess import (
     HEIGHT,
     WHITE,
     TILE_SIZE,
+    Piece,
 )
 
 """
@@ -30,7 +31,7 @@ pygame.display.set_caption("Chess")
 Assets = os.path.join(sourceFileDir, 'chess_game' ,'Assests')
 
 
-def get_square_under_mouse(board):
+def get_square_under_mouse(board: Board):
     x, y = pygame.mouse.get_pos()
     row = y // TILE_SIZE
     col = x // TILE_SIZE
@@ -39,7 +40,7 @@ def get_square_under_mouse(board):
     return piece, row, col
 
 
-def draw_drag(board, selected_piece):
+def draw_drag(board: Board, selected_piece: Piece):
     row, col = None, None
     if selected_piece:
         piece, row, col = get_square_under_mouse(board)

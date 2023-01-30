@@ -8,14 +8,16 @@ from chess_game.chess.constants import (
     PIECE_DICT
 )
 from chess_game.chess.piece import (
-    put_piece
+    Piece,
+    put_piece,
 )
 import pygame
+from typing import Union, Optional, Tuple
 
 
 class Board:
 
-    def __init__(self, cfg = None):
+    def __init__(self, cfg: Optional[str] = None):
         self.selected_piece = None
         self.board = []
         if cfg is None:
@@ -40,7 +42,7 @@ class Board:
                     self.board[row].append(0)
                     col += 1
 
-    def draw(self, screen, selected_piece, mouse_position=None):
+    def draw(self, screen: Union[pygame.Surface, pygame.SurfaceType], selected_piece: Piece, mouse_position: Optional[Tuple[int, int]]=None):
         self.draw_squares(screen)
         if selected_piece is not None:
             moving_piece, moving_row, moving_col = selected_piece
@@ -57,10 +59,10 @@ class Board:
                     else:
                         piece.draw(screen)
 
-    def get_piece(self, row, col):
+    def get_piece(self, row: int, col: int):
         return self.board[row][col]
 
-    def draw_squares(self, screen):
+    def draw_squares(self, screen: Union[pygame.Surface, pygame.SurfaceType],):
         white = False
         for row in range(ROWS):
             for col in range(COLS):
@@ -78,7 +80,7 @@ class Board:
                 white = not white
             white = not white
 
-    def move(self, piece, row, col):
+    def move(self, piece: Piece, row: int, col: int):
         is_valid = piece.is_valid_move(row, col, self.board)
         if is_valid:
             self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
