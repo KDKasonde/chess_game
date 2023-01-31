@@ -3,6 +3,7 @@
 import pygame
 import os
 from chess_game.chess import (
+    Game,
     Board,
     WIDTH,
     HEIGHT,
@@ -23,12 +24,12 @@ Chess game with graphics
 
 # Get file directory
 
-sourceFileDir = os.path.dirname(os.path.abspath('main.py'))
+sourceFileDir = os.path.dirname(os.path.abspath("main.py"))
 # define the screen, framerate and other
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FRAMERATE = 60
 pygame.display.set_caption("Chess")
-Assets = os.path.join(sourceFileDir, 'chess_game' ,'Assests')
+Assets = os.path.join(sourceFileDir, "chess_game", "Assests")
 
 
 def get_square_under_mouse(board: Board):
@@ -64,33 +65,29 @@ def draw_window():
 def main():
     clock = pygame.time.Clock()
     run = True
-    board = Board()
+    game = Game(screen)
     draw_window()
-    selected_piece = None
 
     while run:
         clock.tick(FRAMERATE)
-        piece, row, col = get_square_under_mouse(board)
+        piece, row, col = get_square_under_mouse(game.board)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if piece != 0:
-                    selected_piece = piece, row, col
+                game.select(piece, row, col)
 
             if event.type == pygame.MOUSEBUTTONUP:
-                if (drop_position[0] is not None) & (drop_position[1] is not None):
-                    piece, old_row, old_col = selected_piece
-                    new_row, new_col = drop_position
-                    board.move(piece, new_row, new_col)
-
-
-                selected_piece = None
+                game.move(drop_position)
                 drop_position = None
 
-        board.draw(screen, selected_piece, pygame.mouse.get_pos())
-        drop_position = draw_drag(board, selected_piece)
+        if game.piece_grabbed:
+            game.board.draw_piece(screen, game.selected_piece, pygame.mouse.get_pos())
+        else:
+            game.board.draw_piece(screen, game.selected_piece)
+
+        drop_position = draw_drag(game.board, game.selected_piece)
 
         pygame.display.flip()
 

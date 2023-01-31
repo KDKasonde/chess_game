@@ -41,7 +41,7 @@ class Board:
                     self.board[row].append(0)
                     col += 1
 
-    def draw(
+    def draw_piece(
         self,
         screen: Union[pygame.Surface, pygame.SurfaceType],
         selected_piece: Piece,
@@ -88,7 +88,7 @@ class Board:
             if not piece.moved:
                 is_castle = piece.is_castle(row, col, self.board)
                 if is_castle:
-                    self._castle(row, col, self.board)
+                    self._castle(piece, row, col)
                     return
 
         is_valid = piece.is_valid_move(row, col, self.board)
