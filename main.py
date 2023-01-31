@@ -82,11 +82,7 @@ def main():
                 game.move(drop_position)
                 drop_position = None
 
-        if game.piece_grabbed:
-            game.board.draw_piece(screen, game.selected_piece, pygame.mouse.get_pos())
-        else:
-            game.board.draw_piece(screen, game.selected_piece)
-
+        game.draw(pygame.mouse.get_pos())
         drop_position = draw_drag(game.board, game.selected_piece)
 
         pygame.display.flip()

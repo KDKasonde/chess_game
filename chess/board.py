@@ -126,5 +126,8 @@ class Board:
 
         return
 
+    def draw_valid_moves(self, piece):
+        pass
+
     def _en_passant(self):
         pass

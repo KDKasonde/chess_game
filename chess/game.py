@@ -56,3 +56,9 @@ class Game:
             self.board.move(piece, new_row, new_col)
 
         return
+
+    def draw(self, mouse_position):
+        if self.piece_grabbed:
+            self.board.draw_piece(self.screen, self.selected_piece, mouse_position)
+        else:
+            self.board.draw_piece(self.screen, self.selected_piece)
