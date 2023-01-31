@@ -18,12 +18,12 @@ class Game:
         self.piece_grabbed = None
         self.selected_piece = None
         self.screen = screen
-        self.board = Board(self.cfg)
-        self.board.create_board()
         if cfg is None:
             self.cfg = config
         else:
             self.cfg = cfg
+        self.board = Board(self.cfg)
+        self.board.create_board()
 
     def _init(self):
         self.selected_piece = None
