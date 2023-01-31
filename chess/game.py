@@ -1,16 +1,9 @@
 from chess_game.chess.constants import (
-    ROWS,
-    COLS,
-    BLACK,
-    WHITE,
-    TILE_SIZE,
     config,
-    PIECE_DICT,
 )
 from chess_game.chess.board import Board
 from chess_game.chess.piece import (
     Piece,
-    put_piece,
 )
 import pygame
 from typing import Union, Optional, Tuple
@@ -41,7 +34,7 @@ class Game:
     def reset(self):
         self._init()
 
-    def select(self, piece, row, col):
+    def select(self, piece: Piece, row: int, col: int):
         if self.selected_piece is not None:
             if piece == self.selected_piece[0]:
                 self.selected_piece = None
@@ -62,4 +55,4 @@ class Game:
             new_row, new_col = new_position
             self.board.move(piece, new_row, new_col)
 
-        drop_position = None
+        return
