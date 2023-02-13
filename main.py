@@ -76,11 +76,25 @@ def main():
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                game.select(piece, row, col)
+                if game.selected_piece:
+                    if game.selected_piece[0] != piece:
+                        game.move(drop_position)
+                    else:
+                        game.piece_grabbed = True
+                else:
+                    game.select(piece, row, col)
 
             if event.type == pygame.MOUSEBUTTONUP:
-                game.move(drop_position)
-                drop_position = None
+                if game.selected_piece:
+                    drop_position = draw_drag(game.board, game.selected_piece)
+                    if (drop_position[0] == game.selected_piece[1]) & (
+                        drop_position[1] == game.selected_piece[2]
+                    ):
+                        drop_position = None
+                        game.piece_grabbed = False
+                    else:
+                        game.move(drop_position)
+                        drop_position = None
 
         game.draw(pygame.mouse.get_pos())
         drop_position = draw_drag(game.board, game.selected_piece)

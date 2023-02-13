@@ -94,6 +94,7 @@ class Board:
         is_valid = piece.is_valid_move(row, col, self.board)
 
         if is_valid:
+            self.board[row][col] = 0
             self.board[piece.row][piece.col], self.board[row][col] = (
                 self.board[row][col],
                 self.board[piece.row][piece.col],

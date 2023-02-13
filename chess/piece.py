@@ -75,9 +75,7 @@ class King(Piece):
             return False
         if (abs(row - self.row) > 1) or (abs(col - self.col) > 1):
             return False
-        if board[row][col] != 0:
-            if board[row][col].colour != self.colour:
-                return True
+        if board[row][col] != 0 or board[row][col] == self.colour:
             return False
         self.moved = True
         return True
@@ -108,9 +106,7 @@ class Queen(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
-        if board[row][col] != 0:
-            if board[row][col].colour != self.colour:
-                return True
+        if board[row][col] != 0 or board[row][col] == self.colour:
             return False
         if (
             (abs(row - self.row) == abs(col - self.col))
@@ -130,9 +126,7 @@ class Rook(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
-        if board[row][col] != 0:
-            if board[row][col].colour != self.colour:
-                return True
+        if board[row][col] != 0 or board[row][col] == self.colour:
             return False
         if (abs(row - self.row) == 0) or (abs(col - self.col) == 0):
             self.moved = True
@@ -148,9 +142,7 @@ class Knight(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
-        if board[row][col] != 0:
-            if board[row][col].colour != self.colour:
-                return True
+        if board[row][col] != 0 or board[row][col] == self.colour:
             return False
         if ((abs(row - self.row) == 1) & (abs(col - self.col) == 2)) or (
             (abs(row - self.row) == 2) & (abs(col - self.col) == 1)
@@ -167,9 +159,7 @@ class Bishop(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
-        if board[row][col] != 0:
-            if board[row][col].colour != self.colour:
-                return True
+        if board[row][col] != 0 or board[row][col] == self.colour:
             return False
         if abs(row - self.row) == abs(col - self.col):
             return True
@@ -189,9 +179,7 @@ class Pawn(Piece):
 
         if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
             return False
-        if board[row][col] != 0:
-            if board[row][col].colour != self.colour:
-                return True
+        if board[row][col] != 0 or board[row][col] == self.colour:
             return False
         if (
             (self.direction * (row - self.row) == 2)

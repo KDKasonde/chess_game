@@ -54,6 +54,7 @@ class Game:
             piece, old_row, old_col = self.selected_piece
             new_row, new_col = new_position
             self.board.move(piece, new_row, new_col)
+            self.selected_piece = None
 
         return
 
