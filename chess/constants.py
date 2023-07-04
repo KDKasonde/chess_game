@@ -9,19 +9,23 @@ WHITE = (255, 255, 255)
 # define some functions and classes for the game loop
 
 TILE_SIZE = 100
-#define FEN starting postion
-config = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+# define FEN starting postion
+config = {
+    "current_board": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+    "active_player": "white",
+}
+
 PIECE_DICT = {
-        'b': 'black-bishop',
-        'B': 'white-bishop',
-        'k': 'black-king',
-        'K': 'white-king',
-        'n': 'black-knight',
-        'N': 'white-knight',
-        'p': 'black-pawn',
-        'P': 'white-pawn',
-        'q': 'black-queen',
-        'Q': 'white-queen',
-        'r': 'black-rook',
-        'R': 'white-rook'
-    }
+    "b": "black-bishop",
+    "B": "white-bishop",
+    "k": "black-king",
+    "K": "white-king",
+    "n": "black-knight",
+    "N": "white-knight",
+    "p": "black-pawn",
+    "P": "white-pawn",
+    "q": "black-queen",
+    "Q": "white-queen",
+    "r": "black-rook",
+    "R": "white-rook",
+}

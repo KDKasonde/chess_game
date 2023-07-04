@@ -101,7 +101,7 @@ class Board:
             )
             piece.move(row, col)
 
-        return
+        return is_valid
 
     def _castle(self, piece: Piece, row: int, col: int):
         if col < piece.col:

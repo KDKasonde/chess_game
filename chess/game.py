@@ -1,5 +1,7 @@
 from chess_game.chess.constants import (
     config,
+    WHITE,
+    BLACK,
 )
 from chess_game.chess.board import Board
 from chess_game.chess.piece import (
@@ -44,14 +46,33 @@ class Game:
             self.cfg = config
         else:
             self.cfg = cfg
-        self.board = Board(self.cfg)
+        self.board = Board(self.cfg["current_board"])
+        self.active_player = self.cfg["active_player"]
         self.board.create_board()
 
-    def _init(self):
+    def _init(self) -> None:
         self.selected_piece = None
         self.piece_grabbed = False
-        self.board = Board(self.cfg)
+        self.board = Board(self.cfg["current_board"])
+        self.active_player = self.cfg["active_player"]
         self.board.create_board()
+        return
+
+    def _switch_player(self) -> None:
+        if self.active_player == "white":
+            self.active_player = "black"
+        else:
+            self.active_player = "white"
+        return
+
+    def _get_str_colour(self) -> str:
+        colour = self.selected_piece[0].colour
+        if colour == WHITE:
+            return "white"
+        elif colour == BLACK:
+            return "black"
+        else:
+            raise ValueError
 
     def reset(self):
         self._init()
@@ -97,11 +118,26 @@ class Game:
         if self.selected_piece is not None:
             self.piece_grabbed = False
 
-        if (new_position[0] is not None) & (new_position[1] is not None):
-            piece, old_row, old_col = self.selected_piece
-            new_row, new_col = new_position
-            self.board.move(piece, new_row, new_col)
+        if new_position[0] is None:
             self.selected_piece = None
+            return
+
+        if new_position[1] is None:
+            self.selected_piece = None
+            return
+
+        colour = self._get_str_colour()
+        if colour != self.active_player:
+            self.selected_piece = None
+            return
+
+        piece, old_row, old_col = self.selected_piece
+        new_row, new_col = new_position
+        is_valid_move = self.board.move(piece, new_row, new_col)
+        self.selected_piece = None
+
+        if is_valid_move:
+            self._switch_player()
 
         return
 
