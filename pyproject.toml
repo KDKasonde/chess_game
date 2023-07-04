@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "chess-game"
+version = "0.0.1"
+description = "A chess game made using python pygame"
+authors = ["Kasonde Kasonde <d.kasonde99@gmail.com>"]
+license = "N/A"
+readme = "README.md"
+packages = [{include = "chess_game"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pygame = "2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
