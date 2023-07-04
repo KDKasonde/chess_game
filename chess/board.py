@@ -24,6 +24,7 @@ class Board:
         else:
             self.cfg = cfg
         self.create_board()
+        self.last_moved_piece = None
 
     def create_board(self):
         row, col = 0, 0
@@ -66,8 +67,8 @@ class Board:
     def get_piece(self, row: int, col: int):
         return self.board[row][col]
 
+    @staticmethod
     def draw_squares(
-        self,
         screen: Union[pygame.Surface, pygame.SurfaceType],
     ):
         white = False
@@ -86,12 +87,12 @@ class Board:
 
         if piece.name == "King":
             if not piece.moved:
-                is_castle = piece.is_castle(row, col, self.board)
+                is_castle = piece.is_castle(row, col, self.board, self.last_moved_piece)
                 if is_castle:
                     self._castle(piece, row, col)
                     return
 
-        is_valid = piece.is_valid_move(row, col, self.board)
+        is_valid = piece.is_valid_move(row, col, self.board, self.last_moved_piece)
 
         if is_valid:
             self.board[row][col] = 0
@@ -100,6 +101,7 @@ class Board:
                 self.board[piece.row][piece.col],
             )
             piece.move(row, col)
+            self.last_moved_piece = piece
 
         return is_valid
 

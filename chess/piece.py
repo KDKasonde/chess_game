@@ -35,6 +35,16 @@ class Piece:
 
         return True
 
+    @staticmethod
+    def _update_en_passant(last_moved_piece):
+        if last_moved_piece is None:
+            return
+        if last_moved_piece.name != "Pawn":
+            return
+        else:
+            last_moved_piece.en_passant = False
+        return
+
     def calculate_position(self):
         self.x = TILE_SIZE * self.col
         self.y = TILE_SIZE * self.row
@@ -82,13 +92,17 @@ class King(Piece):
         self.name = "King"
         self.moved = False
 
-    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+    def is_valid_move(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece = None
+    ):
 
         status = self._sense_check_move(row, col, board)
         if not status:
             return False
         if (abs(row - self.row) > 1) or (abs(col - self.col) > 1):
             return False
+        self._update_en_passant(last_moved_piece)
+        return True
 
     def is_castle(self, row: int, col: int, board: List[List[int]]):
 
@@ -112,7 +126,9 @@ class Queen(Piece):
         super().__init__(row, col, colour)
         self.name = "Queen"
 
-    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+    def is_valid_move(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece = None
+    ):
         status = self._sense_check_move(row, col, board)
         if not status:
             return False
@@ -121,6 +137,7 @@ class Queen(Piece):
             or (abs(row - self.row) == 0)
             or (abs(col - self.col) == 0)
         ):
+            self._update_en_passant(last_moved_piece)
             return True
 
 
@@ -130,13 +147,16 @@ class Rook(Piece):
         self.name = "Rook"
         self.moved = False
 
-    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+    def is_valid_move(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece = None
+    ):
 
         status = self._sense_check_move(row, col, board)
         if not status:
             return False
         if (abs(row - self.row) == 0) or (abs(col - self.col) == 0):
             self.moved = True
+            self._update_en_passant(last_moved_piece)
             return True
         return False
 
@@ -146,7 +166,9 @@ class Knight(Piece):
         super().__init__(row, col, colour)
         self.name = "Knight"
 
-    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+    def is_valid_move(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece = None
+    ):
 
         status = self._sense_check_move(row, col, board)
         if not status:
@@ -155,6 +177,7 @@ class Knight(Piece):
         if ((abs(row - self.row) == 1) & (abs(col - self.col) == 2)) or (
             (abs(row - self.row) == 2) & (abs(col - self.col) == 1)
         ):
+            self._update_en_passant(last_moved_piece)
             return True
 
 
@@ -163,12 +186,15 @@ class Bishop(Piece):
         super().__init__(row, col, colour)
         self.name = "Bishop"
 
-    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+    def is_valid_move(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece = None
+    ):
 
         status = self._sense_check_move(row, col, board)
         if not status:
             return False
         if abs(row - self.row) == abs(col - self.col):
+            self._update_en_passant(last_moved_piece)
             return True
 
 
@@ -177,12 +203,49 @@ class Pawn(Piece):
         super().__init__(row, col, colour)
         self.name = "Pawn"
         self.moved = False
+        self.en_passant = False
         if self.colour == WHITE:
             self.direction = 1
         else:
             self.direction = -1
 
-    def is_valid_move(self, row: int, col: int, board: List[List[int]]):
+    def _check_en_passant(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece
+    ):
+        if last_moved_piece.name != "Pawn":
+            return False
+        if isinstance(board[row][col], int):
+            target_pawn_row = row - 1 * self.direction
+            opposing_pawn = board[target_pawn_row][col]
+            if isinstance(opposing_pawn, int):
+                return False
+            if opposing_pawn != last_moved_piece:
+                return False
+            if not opposing_pawn.en_passant:
+                return False
+            if opposing_pawn.colour != self.colour:
+                board[target_pawn_row][col] = 0
+                self.moved = True
+                return True
+
+    def _check_capture(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece
+    ):
+        if self._check_en_passant(row, col, board, last_moved_piece):
+            return True
+        if (self.direction * (row - self.row) == 1) & (
+            abs(self.direction * (col - self.col)) == 1
+        ):
+            if isinstance(board[row][col], int):
+                return False
+            elif board[row][col].colour == self.colour:
+                return False
+            else:
+                return True
+
+    def is_valid_move(
+        self, row: int, col: int, board: List[List[int]], last_moved_piece: Piece
+    ):
 
         status = self._sense_check_move(row, col, board)
         if not status:
@@ -193,23 +256,27 @@ class Pawn(Piece):
             & (self.direction * (col - self.col) == 0)
             & (not self.moved)
         ):
+            self.en_passant = True
             self.moved = True
+            self._update_en_passant(last_moved_piece)
             return True
 
         if (self.direction * (row - self.row) == 1) & (
             self.direction * (col - self.col) == 0
         ):
             self.moved = True
+            self._update_en_passant(last_moved_piece)
             return True
 
-        if (
+        if not (
             (self.direction * (row - self.row) == 1)
             & (abs(self.direction * (col - self.col)) == 1)
-            & (not isinstance(board[row][col], int))
         ):
-            if board[row][col].colour != self.colour:
-                self.moved = True
-                return True
+            return False
+
+        if self._check_capture(row, col, board, last_moved_piece):
+            self._update_en_passant(last_moved_piece)
+            return True
 
         return False
 
