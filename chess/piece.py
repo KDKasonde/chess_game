@@ -22,6 +22,19 @@ class Piece:
         self.name = ""
         self.calculate_position()
 
+    def _sense_check_move(self, row: int, col: int, board: List[List[int]]):
+        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+            return False
+
+        if isinstance(board[row][col], int):
+            if board[row][col] != 0:
+                return False
+        else:
+            if board[row][col].colour == self.colour:
+                return False
+
+        return True
+
     def calculate_position(self):
         self.x = TILE_SIZE * self.col
         self.y = TILE_SIZE * self.row
@@ -71,14 +84,11 @@ class King(Piece):
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
 
-        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+        status = self._sense_check_move(row, col, board)
+        if not status:
             return False
         if (abs(row - self.row) > 1) or (abs(col - self.col) > 1):
             return False
-        if board[row][col] != 0 or board[row][col] == self.colour:
-            return False
-        self.moved = True
-        return True
 
     def is_castle(self, row: int, col: int, board: List[List[int]]):
 
@@ -103,10 +113,8 @@ class Queen(Piece):
         self.name = "Queen"
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
-
-        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
-            return False
-        if board[row][col] != 0 or board[row][col] == self.colour:
+        status = self._sense_check_move(row, col, board)
+        if not status:
             return False
         if (
             (abs(row - self.row) == abs(col - self.col))
@@ -124,13 +132,13 @@ class Rook(Piece):
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
 
-        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
-            return False
-        if board[row][col] != 0 or board[row][col] == self.colour:
+        status = self._sense_check_move(row, col, board)
+        if not status:
             return False
         if (abs(row - self.row) == 0) or (abs(col - self.col) == 0):
             self.moved = True
             return True
+        return False
 
 
 class Knight(Piece):
@@ -140,10 +148,10 @@ class Knight(Piece):
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
 
-        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+        status = self._sense_check_move(row, col, board)
+        if not status:
             return False
-        if board[row][col] != 0 or board[row][col] == self.colour:
-            return False
+
         if ((abs(row - self.row) == 1) & (abs(col - self.col) == 2)) or (
             (abs(row - self.row) == 2) & (abs(col - self.col) == 1)
         ):
@@ -157,9 +165,8 @@ class Bishop(Piece):
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
 
-        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
-            return False
-        if board[row][col] != 0 or board[row][col] == self.colour:
+        status = self._sense_check_move(row, col, board)
+        if not status:
             return False
         if abs(row - self.row) == abs(col - self.col):
             return True
@@ -177,10 +184,10 @@ class Pawn(Piece):
 
     def is_valid_move(self, row: int, col: int, board: List[List[int]]):
 
-        if (row not in [x for x in range(8)]) or (col not in [x for x in range(8)]):
+        status = self._sense_check_move(row, col, board)
+        if not status:
             return False
-        if board[row][col] != 0 or board[row][col] == self.colour:
-            return False
+
         if (
             (self.direction * (row - self.row) == 2)
             & (self.direction * (col - self.col) == 0)
@@ -188,11 +195,23 @@ class Pawn(Piece):
         ):
             self.moved = True
             return True
+
         if (self.direction * (row - self.row) == 1) & (
             self.direction * (col - self.col) == 0
         ):
             self.moved = True
             return True
+
+        if (
+            (self.direction * (row - self.row) == 1)
+            & (abs(self.direction * (col - self.col)) == 1)
+            & (not isinstance(board[row][col], int))
+        ):
+            if board[row][col].colour != self.colour:
+                self.moved = True
+                return True
+
+        return False
 
 
 def put_piece(string: str, row: int, col: int):
