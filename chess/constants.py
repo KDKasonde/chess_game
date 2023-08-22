@@ -2,6 +2,7 @@
 WIDTH, HEIGHT = 800, 800
 ROWS, COLS = 8, 8
 # some colours I will use
+YELLOW = (234, 221, 202)
 GREY = (128, 128, 128)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)

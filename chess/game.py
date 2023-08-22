@@ -1,4 +1,4 @@
-from chess_game.chess.constants import config, WHITE, BLACK, GREY
+from chess_game.chess.constants import config, WHITE, BLACK, GREY, YELLOW
 from chess_game.chess.board import Board
 from chess_game.chess.piece import (
     Piece,
@@ -56,6 +56,12 @@ class Game:
         self.promotion_target = None
 
     def _init(self) -> None:
+        """
+        private method for resetting the game board
+        Returns
+        -------
+            None
+        """
         self.selected_piece = None
         self.piece_grabbed = False
         self.board = Board(self.cfg["current_board"])
@@ -64,6 +70,12 @@ class Game:
         return
 
     def _switch_player(self) -> None:
+        """
+        Private method to switch the games active player
+        Returns
+        -------
+            None
+        """
         if self.active_player == "white":
             self.active_player = "black"
         else:
@@ -71,6 +83,12 @@ class Game:
         return
 
     def _get_str_colour(self) -> str:
+        """
+        Private method for retrieving the colour given an rgb representation/
+        Returns
+        -------
+            None
+        """
         colour = self.selected_piece[0].colour
         if colour == WHITE:
             return "white"
@@ -151,6 +169,22 @@ class Game:
         return
 
     def _promotion_screen(self, piece: Piece, new_row: int, new_col: int) -> None:
+        """
+        This sets the promotion target in the game so that it can start the promotion
+        screen.
+        Parameters
+        ----------
+        piece: Piece
+            The piece that needs promoting.
+        new_row: int
+            The row it has moved to (0 or 7) in all cases.
+        new_col: int
+            The column the piece is now on.
+
+        Returns
+        -------
+            None
+        """
         self.promotion_target = {
             "piece": piece,
             "row": new_row,
@@ -160,6 +194,13 @@ class Game:
         return
 
     def draw_promotion_window(self):
+        """
+        This method draws the screen that gives the current player piece options for
+        promoting a pass pawn.
+        Returns
+        -------
+            None
+        """
         pygame.draw.rect(
             self.screen,
             GREY,
@@ -171,7 +212,61 @@ class Game:
             location = os.path.join(Assets, piece_image)
             image = pygame.image.load(location).convert_alpha()
             image = pygame.transform.scale(image, (self.TILE_SIZE, self.TILE_SIZE))
-            self.screen.blit(image, (self.TILE_SIZE * (index), self.TILE_SIZE * 1.5))
+            self.screen.blit(image, (self.TILE_SIZE * index, self.TILE_SIZE * 1.5))
+        return
+
+    def _draw_focus(self, piece: str, x: int, y: int) -> None:
+        """
+        Method used to draw the piece the use is currently hovering over,
+        to highlight what will be selected.
+        Parameters
+        ----------
+        piece: str
+            This is the name of the piece the user is hovering over.
+        x: int
+            The x axis location of that piece on the window.
+        y: int
+            The y axis location of the piece being hovered over.
+
+        Returns
+        -------
+            None
+        """
+        str_colour = "White" if self.active_player == "white" else "Black"
+        piece_image = str_colour + piece + ".png"
+        location = os.path.join(Assets, piece_image)
+        image = pygame.image.load(location).convert_alpha()
+        image = pygame.transform.scale(image, (self.TILE_SIZE, self.TILE_SIZE))
+        pygame.draw.rect(
+            self.screen,
+            YELLOW,
+            (x, y, self.TILE_SIZE, self.TILE_SIZE),
+        )
+        self.screen.blit(image, (x, y))
+        return
+
+    def check_promotion_window(self) -> None:
+        """
+        Method to check whether a user is hovering over the promotion options.
+        Returns
+        -------
+            None
+        """
+        x, y = pygame.mouse.get_pos()
+        options = {
+            "Queen": [(0, 200), (300, 500)],
+            "Rook": [(200, 400), (300, 500)],
+            "Bishop": [(400, 600), (300, 500)],
+            "Knight": [(600, 800), (300, 500)],
+        }
+
+        for element in options.keys():
+            col_coords = options[element][0]
+            row_coords = options[element][1]
+            if (col_coords[0] <= x <= col_coords[1]) and (
+                row_coords[0] <= y <= row_coords[1]
+            ):
+                self._draw_focus(piece=element, x=col_coords[0], y=row_coords[0])
         return
 
     def draw(self, mouse_position: Tuple[int, int]) -> None:
@@ -185,7 +280,7 @@ class Game:
 
         Returns
         -------
-        None
+            None
         """
         if self.piece_grabbed:
             self.board.draw_piece(self.screen, self.selected_piece, mouse_position)
@@ -193,5 +288,5 @@ class Game:
             self.board.draw_piece(self.screen, self.selected_piece)
         if self.promotion_target is not None:
             self.draw_promotion_window()
-
+            self.check_promotion_window()
         return
