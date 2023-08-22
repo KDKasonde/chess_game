@@ -104,7 +104,9 @@ class Game:
 
     def move(self, new_position: Tuple[int, int]) -> None:
         """
-
+        This method takes the current piece instance and checks whether it is a valid move,
+        calling the board object move method to actually move the piece and switching players
+        if successful.
         Parameters
         ----------
         new_position: Tuple[int, int]
@@ -143,7 +145,7 @@ class Game:
 
     def draw(self, mouse_position: Tuple[int, int]) -> None:
         """
-
+        This method draws the board screen.
         Parameters
         ----------
         mouse_position: Tuple[int, int]
