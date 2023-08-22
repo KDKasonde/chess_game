@@ -1,14 +1,15 @@
-from chess_game.chess.constants import (
-    config,
-    WHITE,
-    BLACK,
-)
+from chess_game.chess.constants import config, WHITE, BLACK, GREY
 from chess_game.chess.board import Board
 from chess_game.chess.piece import (
     Piece,
 )
 import pygame
 from typing import Union, Optional, Tuple
+import os
+
+
+sourceFileDir = os.path.dirname(os.path.abspath("main.py"))
+Assets = os.path.join(sourceFileDir, "chess_game", "Assests")
 
 
 class Game:
@@ -34,6 +35,9 @@ class Game:
         draws the piece being dragged by the mouse each frame, so piece can be mouse dragged.
     """
 
+    TILE_SIZE = 200
+    OFFSET = 200
+
     def __init__(
         self,
         screen: Union[pygame.Surface, pygame.SurfaceType],
@@ -49,6 +53,7 @@ class Game:
         self.board = Board(self.cfg["current_board"])
         self.active_player = self.cfg["active_player"]
         self.board.create_board()
+        self.promotion_target = None
 
     def _init(self) -> None:
         self.selected_piece = None
@@ -135,12 +140,38 @@ class Game:
 
         piece, old_row, old_col = self.selected_piece
         new_row, new_col = new_position
-        is_valid_move = self.board.move(piece, new_row, new_col)
+        is_valid_move, pawn_promotion = self.board.move(piece, new_row, new_col)
         self.selected_piece = None
-
+        if pawn_promotion and is_valid_move:
+            self._promotion_screen(piece, new_row, new_col)
+            return
         if is_valid_move:
             self._switch_player()
 
+        return
+
+    def _promotion_screen(self, piece: Piece, new_row: int, new_col: int) -> None:
+        self.promotion_target = {
+            "piece": piece,
+            "row": new_row,
+            "col": new_col,
+        }
+
+        return
+
+    def draw_promotion_window(self):
+        pygame.draw.rect(
+            self.screen,
+            GREY,
+            (0, self.TILE_SIZE, self.TILE_SIZE * 4, self.TILE_SIZE * 2),
+        )
+        for index, piece in enumerate(["Queen", "Rook", "Bishop", "Knight"]):
+            str_colour = "White" if self.active_player == "white" else "Black"
+            piece_image = str_colour + piece + ".png"
+            location = os.path.join(Assets, piece_image)
+            image = pygame.image.load(location).convert_alpha()
+            image = pygame.transform.scale(image, (self.TILE_SIZE, self.TILE_SIZE))
+            self.screen.blit(image, (self.TILE_SIZE * (index), self.TILE_SIZE * 1.5))
         return
 
     def draw(self, mouse_position: Tuple[int, int]) -> None:
@@ -160,4 +191,7 @@ class Game:
             self.board.draw_piece(self.screen, self.selected_piece, mouse_position)
         else:
             self.board.draw_piece(self.screen, self.selected_piece)
+        if self.promotion_target is not None:
+            self.draw_promotion_window()
+
         return

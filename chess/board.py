@@ -87,10 +87,10 @@ class Board:
 
         if piece.name == "King":
             if not piece.moved:
-                is_castle = piece.is_castle(row, col, self.board, self.last_moved_piece)
+                is_castle = piece.is_castle(row, col, self.board)
                 if is_castle:
                     self._castle(piece, row, col)
-                    return
+                    return None, None
 
         is_valid = piece.is_valid_move(row, col, self.board, self.last_moved_piece)
 
@@ -103,7 +103,10 @@ class Board:
             piece.move(row, col)
             self.last_moved_piece = piece
 
-        return is_valid
+        if piece.name == "Pawn" and (row == 0 or row == 7):
+            return is_valid, True
+
+        return is_valid, False
 
     def _castle(self, piece: Piece, row: int, col: int):
         if col < piece.col:
