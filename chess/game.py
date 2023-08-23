@@ -1,8 +1,6 @@
 from chess_game.chess.constants import config, WHITE, BLACK, GREY, YELLOW
 from chess_game.chess.board import Board
-from chess_game.chess.piece import (
-    Piece,
-)
+from chess_game.chess.piece import Piece, Queen, Rook, Bishop, Knight
 import pygame
 from typing import Union, Optional, Tuple
 import os
@@ -267,6 +265,43 @@ class Game:
                 row_coords[0] <= y <= row_coords[1]
             ):
                 self._draw_focus(piece=element, x=col_coords[0], y=row_coords[0])
+        return
+
+    @staticmethod
+    def get_piece(
+        row: int, col: int, colour: Tuple[int, int, int], piece: str
+    ) -> Piece:
+        pieces = {
+            "Queen": Queen(row=row, col=col, colour=colour),
+            "Rook": Rook(row=row, col=col, colour=colour),
+            "Bishop": Bishop(row=row, col=col, colour=colour),
+            "Knight": Knight(row=row, col=col, colour=colour),
+        }
+
+        return pieces[piece]
+
+    def attempt_promotion(self):
+        x, y = pygame.mouse.get_pos()
+        row = self.promotion_target["row"]
+        col = self.promotion_target["col"]
+        colour = self.promotion_target["piece"].colour
+        options = {
+            "Queen": [(0, 200), (300, 500)],
+            "Rook": [(200, 400), (300, 500)],
+            "Bishop": [(400, 600), (300, 500)],
+            "Knight": [(600, 800), (300, 500)],
+        }
+
+        for element in options.keys():
+            col_coords = options[element][0]
+            row_coords = options[element][1]
+            if (col_coords[0] <= x <= col_coords[1]) and (
+                row_coords[0] <= y <= row_coords[1]
+            ):
+                piece = self.get_piece(row=row, col=col, colour=colour, piece=element)
+                self.board.place(row, col, piece)
+                self.promotion_target = None
+                self._switch_player()
         return
 
     def draw(self, mouse_position: Tuple[int, int]) -> None:

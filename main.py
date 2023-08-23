@@ -85,7 +85,9 @@ def main():
                     game.select(piece, row, col)
 
             if event.type == pygame.MOUSEBUTTONUP:
-                if game.selected_piece:
+                if game.promotion_target is not None:
+                    game.attempt_promotion()
+                elif game.selected_piece:
                     drop_position = draw_drag(game.board, game.selected_piece)
                     if (drop_position[0] == game.selected_piece[1]) & (
                         drop_position[1] == game.selected_piece[2]

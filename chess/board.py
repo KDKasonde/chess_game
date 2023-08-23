@@ -26,6 +26,10 @@ class Board:
         self.create_board()
         self.last_moved_piece = None
 
+    def place(self, row: int, col: int, piece: Piece) -> None:
+        self.board[row][col] = piece
+        return
+
     def create_board(self):
         row, col = 0, 0
         self.board.append([])
